@@ -1,0 +1,16 @@
+{
+  "name": "proyecto-de-moviles",
+  "version": "1.0.0",
+  "description": "proyecto de web scraping IV Ingenieria",
+  "main": "index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "prestart": "npx tsc"
+  },
+  "author": "Brayan Rosales Perez",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2"
+  }
+}
