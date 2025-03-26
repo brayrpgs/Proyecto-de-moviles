@@ -1,10 +1,8 @@
 import express, { Application } from "express";
-import morgan from "morgan";
-import { Data } from "./controllers/data";
-
+import { Authentication } from "./authentication/Authentication";
+import { Middlewares } from "./middlewares/Middlewares";
 
 class Main {
-    
     private app: Application;
     private port: number;
 
@@ -12,24 +10,26 @@ class Main {
         this.app = express();
         this.port = port;
         this.middlewares();
-        this.rutes();
+        this.routes(); 
         this.start();
     }
 
     private start() {
         this.app.listen(this.port, () => {
-            console.log(`App listening on port http://localhost:${this.port}/`)
-        })
+            console.log(`App listening on port http://localhost:${this.port}/`);
+        });
     }
 
-    private rutes() {
-        new Data("/").routes(this.app);
+    private routes() {
+        
+        new Authentication("/auth").routes(this.app);
 
     }
 
     private middlewares() {
-        this.app.use(morgan("common"));
-        
+        // new Middlewares(this.app);
+        new Middlewares(this.app);
     }
 }
+
 new Main(3000);
