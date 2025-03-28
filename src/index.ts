@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import { Authentication } from "./authentication/Authentication";
 import { Middlewares } from "./middlewares/Middlewares";
+import { Data } from "./controllers/data";
 
 class Main {
     private app: Application;
@@ -21,7 +22,7 @@ class Main {
     }
 
     private routes() {
-        
+        new Data("/test").routes(this.app);
         new Authentication("/auth").routes(this.app);
 
     }
