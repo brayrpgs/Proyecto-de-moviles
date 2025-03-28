@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const Authentication_1 = require("./authentication/Authentication");
 const Middlewares_1 = require("./middlewares/Middlewares");
 const UserController_1 = require("./controllers/UserController");
+const pruebas_1 = require("./models/pruebas");
 class Main {
     constructor(port) {
         this.userController = new UserController_1.UserController();
@@ -37,6 +38,7 @@ class Main {
         this.app.delete('/api/users/:id', (req, res) => {
             this.userController.delete(req, res);
         });
+        (0, pruebas_1.create)();
     }
     middlewares() {
         // new Middlewares(this.app);
