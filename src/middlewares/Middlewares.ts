@@ -8,18 +8,13 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import { Strategy as FacebookStrategy } from 'passport-facebook';
 import { Strategy as GitHubStrategy } from 'passport-github2';
-
-// Because we don't have a database yet, we will use a test user
-const testUser = {
-    id: "1",
-    username: "admin",
-    password: bcrypt.hashSync("123456", 10),
-    displayName: "Patricio" 
-};
+import { UserController } from "../controllers/UserController";
+import User from "../models/User";
 
 export class Middlewares {
 
     private app: Application;
+    private userController = new UserController();
 
     // Define the URLs for the callback routes
     private static readonly CALLBACK_URLS = {
@@ -31,6 +26,8 @@ export class Middlewares {
     constructor(app: Application) {
         this.app = app;
 
+        this.userController = new UserController();
+
         // Morgan is used for logging HTTP requests
         this.app.use(morgan("common"));
         this.app.use(express.urlencoded({ extended: true })); // To read the body of the request, temporarily
@@ -38,7 +35,7 @@ export class Middlewares {
         // Handle the session
         this.app.use(
             session({
-                secret: process.env.SESSION_SECRET || "default_secret",  
+                secret: process.env.SESSION_SECRET || "default_secret",
                 resave: false,
                 saveUninitialized: true,
             })
@@ -90,7 +87,7 @@ export class Middlewares {
 
         // Register the strategies
         strategies.forEach(({ strategy, options }) => {
-            
+
             passport.use(new (strategy as new (...args: any[]) => passport.Strategy)(options as any, verifyCallback));
         });
 
@@ -101,22 +98,36 @@ export class Middlewares {
 
     // Method to configure the local strategy
     private configureLocalStrategy(): void {
-        passport.use(new LocalStrategy((username, password, done) => {
-            if (username === testUser.username && bcrypt.compareSync(password, testUser.password)) {
-                return done(null, testUser as Express.User);
-            } else {
-                return done(null, false, { message: "Incorrect credentials" });
-            }
-        }));
+        passport.use(
+            new LocalStrategy(
+                {
+                    usernameField: "email",
+                    passwordField: "password", 
+                },
+                async (email: string, password: string, done) => {
+                    try {
 
-        passport.serializeUser((user, done) => done(null, (user as any).id));
-        passport.deserializeUser((id, done) => {
-            if (id === testUser.id) {
-                done(null, testUser as Express.User);
-            } else {
-                done(null, false);
-            }
-        });
+                        const user: User = await this.userController.findByEmail(email);
+                        
+                        if (!user || !user.isActive) {
+                            return done(null, false, { message: "User not found" });
+                        } 
+
+                        const isMatch = await bcrypt.compare(password, user.password as string);
+
+                        if (!isMatch) {
+                            
+                            return done(null, false, { message: "Incorrect credentials" });
+                        }
+
+                        return done(null, user);
+
+                    } catch (error) {
+                        return done(error);
+                    }
+                }
+            )
+        );
     }
 
 }

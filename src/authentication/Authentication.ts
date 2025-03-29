@@ -2,40 +2,19 @@ require("dotenv").config();
 
 import { Application, Request, Response } from "express";
 import passport from "passport";
-
-// Extend the Express.User interface to include displayName 
-// This is temporary until the type definitions are updated
-declare global {
-    namespace Express {
-        interface User {
-            displayName?: string;
-        }
-    }
-}
+import { UserController } from "../controllers/UserController";
 
 export class Authentication {
     private route: string;
+    private userController = new UserController();
 
     constructor(route: string) {
         this.route = route;
+        this.userController = new UserController();
     }
 
     routes(app: Application) {
-        // To show the login options, this is temporary
-        app.route(this.route).get((req: Request, res: Response) => {
-            res.send(
-                `<a href='/auth/google'>Login with Google</a>
-                <a href='/auth/facebook'>Login with Facebook</a>
-                <a href='/auth/github'>Login with Github</a>
-                <form action="/auth/login" method="POST">
-                    <input type="text" name="username" placeholder="Usuario" required/>
-                    <input type="password" name="password" placeholder="Contraseña" required/>
-                    <button type="submit">Iniciar sesión</button>
-                </form>
-                `
-            );
-        });
-
+        
         // Authentication routes
         this.configureAuthRoute(app, 'google', ['profile', 'email']);
         this.configureAuthRoute(app, 'facebook', ['email', 'public_profile']);
@@ -47,30 +26,72 @@ export class Authentication {
         this.configureCallbackRoute(app, 'github');
 
         // Route to handle the local login
-        app.route(`${this.route}/login`).post(passport.authenticate("local", {
-            successRedirect: "/auth/user",
-            failureRedirect: "/auth",
-        }));
+        app.route(`${this.route}/login`).post((req: Request, res: Response, next) => {
+            passport.authenticate(
+                "local", 
+                (err: any, user: Express.User | false, info: { message?: string } | undefined) => {
+                    if (err) {
+                        return res.status(500).send("Error in the authentication");
+                    }
+                    if (!user) {
+                        return res.status(400).send(info?.message || "Incorrect credentials");
+                    }
+        
+                    // Create session login
+                    req.logIn(user, (err: any) => {
+                        if (err) {
+                            return res.status(500).send("Error in login");
+                        }
+                        return res.status(200).send("Session verified");
+                    });
+                }
+            )(req, res, next);
+        });
 
-        // Route to show the user information, this is temporary
-        app.route(`${this.route}/user`).get((req: Request, res: Response) => {
+        // Recover data of the user
+        app.route(`${this.route}/userinfo`).get((req: Request, res: Response) => {
             if (req.user) {
-                const user = req.user as Express.User;
-                res.send(`Welcome user: ${user.displayName || 'Unknown'}`);
+                if((req.user as any).provider === "facebook"){
+                    res.send("Hola facebook")
+                    
+                } else if ((req.user as any).provider === "google"){
+                    res.send("Hola google")
+
+                } else if ((req.user as any).provider === "github"){
+                    res.send("Hola github")
+
+                } else {
+                    res.send("Hola local")
+                }
+                
             } else {
                 res.status(401).send("User not authenticated");
             }
         });
 
         // Logout route
-        app.route(`${this.route}/logout`).get((req: Request, res: Response) => {
+        app.route(`${this.route}/logout`).get((req: Request, res: Response, next) => {
+            if (!req.isAuthenticated()) {
+                res.status(400).send("No active session to log out");
+                return;
+            }
+        
             req.logout((err) => {
                 if (err) {
-                    return res.status(500).send("Failed to log out");
+                    res.status(500).send("Failed to log out");
+                    return;
                 }
-                res.redirect(this.route);
+        
+                req.session.destroy((err) => {
+                    if (err) {
+                        res.status(500).send("Failed to destroy session");
+                        return;
+                    }
+                    res.status(200).send("Logged out successfully");
+                });
             });
         });
+
     }
 
     // Method to configure the authentication route for each provider
@@ -85,7 +106,7 @@ export class Authentication {
         app.route(`${this.route}/${provider}/callback`).get(
             passport.authenticate(provider, { failureRedirect: "/" }),
             (req: Request, res: Response) => {
-                res.redirect("/auth/user");
+                res.redirect("/auth/userinfo");
             }
         );
     }
