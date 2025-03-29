@@ -14,56 +14,42 @@ export class ProductController {
     async create(req: Request, res: Response) {
         try {
             ApiResponse.success(res, { message: "Creating products wait a minute" }, 201);
-            // Validate request body
-            const prueba = {
-                id: 1,
-                summary: '5x Reflector de Seguridad Coche Auto Reflectante Advertencia Tira Cinta Parachoques Camión',
-                urlIdentifier: 'https://i.ebayimg.com/images/g/5GYAAOSwvVJmqP3x/s-l500.webp',
-                name: '5x Reflector de Seguridad Coche Auto Reflectante Advertencia Tira Cinta Parachoques Camión',
-                price: '₡ 496.40',
-                typeCoin: '₡',
-                dateConsulted: '2025-03-29T08:20:59.758Z',
-                store: 'Ebay',
-                tags: ["carros","rayos"],
-                isActive: true,
-                createdAt: '2025-03-29T08:20:59.758Z',
-                updatedAt: '2025-03-29T08:20:59.758Z'}
-
-                this.productService.create(prueba);
-
-            /*
-            const product_ScrappingEbay = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
+        
+            
+            //const product_ScrappingEbay = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
             const product_ScrappingAlibaba = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba();
-            const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
+            //const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
+
+            
+            console.log(product_ScrappingAlibaba)
 
             Array.from(product_ScrappingAlibaba).map((product: any) => {
+                
                 const newProduct = {
 
-                    urlIdentifier: product.image,
+                    url_indentifier: product.image,
                     name: product.title,
                     price: product.price,
-                    typeCoin: product.type_coin,
+                    type_coin: product.type_coin,
                     dateConsulted: new Date,
                     store: "Alibaba",
                     tags: req.body.name,
                     isActive: true,
                     createdAt: new Date,
                     updatedAt: new Date
-                    
 
                 }
-                
                 this.productService.create(newProduct);
             });
-
+/*
 
             Array.from(product_ScrappingAmazon).map((product: any) => {
                 const newProduct = {
 
-                    urlIdentifier: product.image,
+                    url_indentifier: product.image,
                     name: product.title,
                     price: product.price,
-                    typeCoin: product.type_coin,
+                    type_coin: product.type_coin,
                     dateConsulted: new Date,
                     store: "Amazon",
                     tags: req.body.name,
@@ -78,10 +64,10 @@ export class ProductController {
             Array.from(product_ScrappingEbay).map((product: any) => {
                 const newProduct = {
 
-                    urlIdentifier: product.image,
+                    url_indentifier: product.image,
                     name: product.title,
                     price: product.price,
-                    typeCoin: product.type_coin,
+                    type_coin: product.type_coin,
                     dateConsulted: new Date,
                     store: "Ebay",
                     tags: req.body.name,

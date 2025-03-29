@@ -8,23 +8,14 @@ export class ProductService {
 
     try{
       
-      
         
-      const { id, urlIdentifier, name, summary, price, typeCoin, dateConsulted,store,tags,isActive,createdAt,updatedAt } = await Product.create(product);
+      const { id, url_indentifier, name, summary, price, type_coin, dateConsulted,store,tags,isActive,createdAt,updatedAt } = await Product.create(product);
       
-      return { id, urlIdentifier, name, summary, price, typeCoin, dateConsulted,store,tags,isActive,createdAt,updatedAt}
+      return { id, url_indentifier, name, summary, price, type_coin, dateConsulted,store,tags,isActive,createdAt,updatedAt}
       
     } catch (error: any) {
       console.error("Error al crear el producto:", error); // Muestra el error en la consola
-      if (error instanceof TypeError) {
-          throw new Error(`TypeError: ${error.message}`);
-      } else if (error instanceof SyntaxError) {
-          throw new Error(`SyntaxError: ${error.message}`);
-      } else if (error.name === "SequelizeValidationError") {
-          throw new Error(`SequelizeValidationError: ${error.errors.map((e: any) => e.message).join(", ")}`);
-      } else {
-          throw new Error(`Error inesperado: ${error.message || JSON.stringify(error)}`);
-      }
+      
   } 
 }
 }
