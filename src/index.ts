@@ -44,7 +44,7 @@ class Main {
     }
 
     private middlewares() {
-        // new Middlewares(this.app);
+
         new Middlewares(this.app);
     }
 }

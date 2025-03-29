@@ -71,4 +71,14 @@ export class UserController {
         }
     }
 
+    // Method to find a user by email
+    async findByEmail(email: string) {
+        try {
+            const user = await this.userService.findByEmail(email);
+            return user;
+        } catch (error: any) {
+            throw new Error(error.message); 
+        }
+    }
+
 }
