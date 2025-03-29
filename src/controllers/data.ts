@@ -12,8 +12,7 @@ export class Data implements Controller {
     routes(app: Application) {
         app.route(this.route)
             .get(async (req: Request, res: Response) => {
-                new WebScraping().setSearchData("zapatos rojos").setUrls(["https://www.amazon.com/"]).init();
-                res.sendStatus(302);
+                res.sendStatus(200);
                 return;
             });
     }
