@@ -1,6 +1,7 @@
 import express, { Application } from "express";
 import { Authentication } from "./authentication/Authentication";
 import { Middlewares } from "./middlewares/Middlewares";
+import { Data } from "./controllers/data";
 import { UserController } from "./controllers/UserController";
 
 class Main {
@@ -24,7 +25,7 @@ class Main {
     }
 
     private routes() {
-        
+        new Data("/test").routes(this.app);
         new Authentication("/auth").routes(this.app);
 
         // User endpoints:
