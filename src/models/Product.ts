@@ -6,7 +6,7 @@ export interface IProductAttributes {
   urlIdentifier?:string;
   name: string;
   summary?: string | null;
-  price: number;
+  price: string;
   typeCoin: string;
   dateConsulted: Date;
   store?: string | null;
@@ -23,7 +23,7 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
   public urlIdentifier!: string;
   public name!: string;
   public summary!: string | null;
-  public price!: number;
+  public price!: string;
   public typeCoin!: string;
   public dateConsulted!: Date;
   public store!: string | null;
@@ -39,13 +39,16 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
       as: 'images'
     });
   }
+    
 
   public getTagsArray(): string[] { // Transform what is on db as string to array
     return this.tags ? this.tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : [];
   }
 
-  public setTagsArray(tags: string[]): void { // Transform array of tags to string for db saving
-    this.tags = tags.map(tag => tag.trim()).filter(tag => tag.length > 0).join(',');
+  public setTagsArray(tags?: string[]): void { 
+    this.tags = tags && tags.length > 0 
+      ? tags.map(tag => tag.trim()).filter(tag => tag.length > 0).join(',')
+      : null;
   }
 
   static initialize() {

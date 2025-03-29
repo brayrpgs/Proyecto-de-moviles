@@ -35,8 +35,8 @@ export class WebScraping {
         return this.searchData;
     }
 
-    public async ScrapingAmazon(): Promise<Object> {
-        const browser = await puppeteer.launch({ headless: false });
+    public async ScrapingAmazon(): Promise<Array<Object>> {
+        const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         await page.goto(this.url);
         await page.reload();
@@ -54,12 +54,12 @@ export class WebScraping {
                 }, element);
             })
         );
-        console.log(data);
+        
         return data;
     }
 
-    public async ScrapingEbay(): Promise<Object> {
-        const browser = await puppeteer.launch({ headless: false });
+    public async ScrapingEbay(): Promise<Array<Object>> {
+        const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         await page.goto(this.url);
         await page.reload();
@@ -77,12 +77,12 @@ export class WebScraping {
                 }, element);
             })
         );
-        console.log(data);
+        
         return data;
     }
 
-    public async ScrapingAlibaba(): Promise<Object> {
-        const browser = await puppeteer.launch({ headless: false });
+    public async ScrapingAlibaba(): Promise<Array<Object>> {
+        const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         await page.goto(this.url);
         await page.reload();
@@ -100,7 +100,7 @@ export class WebScraping {
                 }, element);
             })
         );
-        console.log(data);
+        
         return data;
     }
 
