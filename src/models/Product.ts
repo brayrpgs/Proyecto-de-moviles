@@ -3,9 +3,11 @@ import sequelize from '../config/db';
 
 export interface IProductAttributes {
   id?: number;
+  urlIdentifier?:string;
   name: string;
   summary?: string | null;
   price: number;
+  typeCoin: string;
   dateConsulted: Date;
   store?: string | null;
   tags?: string | null;
@@ -18,9 +20,11 @@ interface IProductCreationAttributes extends Optional<IProductAttributes, 'id'> 
 
 class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
   public id!: number;
+  public urlIdentifier!: string;
   public name!: string;
   public summary!: string | null;
   public price!: number;
+  public typeCoin!: string;
   public dateConsulted!: Date;
   public store!: string | null;
   public tags!: string | null;
@@ -53,7 +57,7 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
           primaryKey: true,
         },
         name: {
-          type: DataTypes.STRING(63),
+          type: DataTypes.STRING(255),
           allowNull: false,
           validate: {
             notEmpty: {
@@ -63,6 +67,14 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
               args: [1, 63],
               msg: 'Product name must be between 1 and 63 characters'
             }
+          }
+        },
+        urlIdentifier: {
+          type: DataTypes.TEXT,
+          allowNull: false,
+          unique: true,
+          validate: {
+            isUrl: { msg: 'URL must be correct' }
           }
         },
         summary: {
@@ -88,6 +100,16 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
             },
             notNull: {
               msg: 'Price is required'
+            }
+          }
+        }, 
+        typeCoin: {
+          type: DataTypes.STRING(15),
+          allowNull: false,
+          validate: {
+            len: {
+              args: [0, 15],
+              msg: 'Type coin cannot exceed 15 characters'
             }
           }
         },
