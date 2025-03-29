@@ -48,6 +48,10 @@ class Main {
         this.app.post('/api/products', (req, res) => {
             this.ProductController.create(req, res);
         });
+
+        this.app.get('/api/products', (req, res) => {
+            this.ProductController.read(req, res);
+        });
         
     }
 

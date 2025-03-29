@@ -82,13 +82,13 @@ export class WebScraping {
     }
 
     public async ScrapingAlibaba(): Promise<Array<Object>> {
-        const browser = await puppeteer.launch({ headless: false });
+        const browser = await puppeteer.launch({ headless: true});
         const page = await browser.newPage();
-        await page.setViewport({ width: 1920, height: 1080 });
         await page.goto(this.url);
         await page.reload();
         await page.goto(`${this.url}trade/search?SearchText=${this.searchData}`);
-        const elements = await page.$$(".fy23-search-card.m-gallery-product-item-v2.J-search-card-wrapper.fy23-gallery-card.searchx-offer-item");
+        //For Another test .fy23-search-card.m-gallery-product-item-v2.J-search-card-wrapper.fy23-gallery-card.searchx-offer-item
+        const elements = await page.$$(".fy23-search-card.m-gallery-product-item-v2.J-search-card-wrapper.searchx-offer-item");
         const data = await Promise.all(
             elements.map(async (element) => {
                 return await page.evaluate(el => {
@@ -102,7 +102,7 @@ export class WebScraping {
             })
         );
         
-        console.log(data);
+        
         return data;
     }
 

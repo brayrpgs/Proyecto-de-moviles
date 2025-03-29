@@ -16,12 +16,12 @@ export class ProductController {
             ApiResponse.success(res, { message: "Creating products wait a minute" }, 201);
         
             
-            //const product_ScrappingEbay = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
+            const product_ScrappingEbay = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
             const product_ScrappingAlibaba = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba();
-            //const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
+            const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
 
             
-            console.log(product_ScrappingAlibaba)
+            // Saving the products in the database
 
             Array.from(product_ScrappingAlibaba).map((product: any) => {
                 
@@ -41,7 +41,7 @@ export class ProductController {
                 }
                 this.productService.create(newProduct);
             });
-/*
+
 
             Array.from(product_ScrappingAmazon).map((product: any) => {
                 const newProduct = {
@@ -79,12 +79,12 @@ export class ProductController {
                 this.productService.create(newProduct);
             });
             
-*/
+
         } catch (error: any) {
             ApiResponse.error(res, error.message, 400);
         }
     }
-    /*
+    
         async read(req: Request, res: Response) {
             try {
                 const page = Math.max(1, parseInt(req.query.page as string)) || 1;
@@ -92,14 +92,14 @@ export class ProductController {
                 const { ...queryParams } = req.query;
     
                // Taking pagination data and users
-                const { count, rows: users } = await this.userService.read(page, size, queryParams);
+                const { count, rows: products } = await this.productService.read(page, size, queryParams);
                 
                 // Result of total pages
                 const totalPages = Math.ceil(count / size);
     
                 // Sending strctured response
                 ApiResponse.success(res, { 
-                    users,
+                    products,
                     pagination: {
                         totalItems: count,
                         totalPages,
@@ -112,38 +112,4 @@ export class ProductController {
             }
         }
     
-        async update(req: Request, res: Response) {
-            try {
-                const id = parseInt(req.params.id);
-                if (isNaN(id)) throw new Error("ID must be a number");
-    
-                const user = await this.userService.update(id, req.body)
-                ApiResponse.success(res, { user}, 200);
-            } catch (error: any) {
-                ApiResponse.error(res, error.message, 400);
-            }
-        }
-    
-        async delete(req: Request, res: Response) {
-            try {
-                const id = parseInt(req.params.id);
-                if (isNaN(id)) throw new Error("ID must be a number");
-    
-                const user = await this.userService.delete(id)
-                ApiResponse.success(res, { user}, 200);
-            } catch (error: any) {
-                ApiResponse.error(res, error.message, 400);
-            }
-        }
-    
-        // Method to find a user by email
-        async findByEmail(email: string) {
-            try {
-                const user = await this.userService.findByEmail(email);
-                return user;
-            } catch (error: any) {
-                throw new Error(error.message); 
-            }
-        }
-    */
 }
