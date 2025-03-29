@@ -30,8 +30,6 @@ export class Middlewares {
 
         // Morgan is used for logging HTTP requests
         this.app.use(morgan("common"));
-        this.app.use(express.urlencoded({ extended: true })); // To read the body of the request, temporarily
-        this.app.use(express.json());
         // Handle the session
         this.app.use(
             session({
@@ -107,7 +105,7 @@ export class Middlewares {
                 async (email: string, password: string, done) => {
                     try {
 
-                        const user: User = await this.userController.findByEmail(email);
+                        const user: User = await this.userController.findByEmail(email.toLocaleLowerCase());
                         
                         if (!user || !user.isActive) {
                             return done(null, false, { message: "User not found" });
