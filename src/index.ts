@@ -1,13 +1,14 @@
 import express, { Application } from "express";
 import { Authentication } from "./authentication/Authentication";
 import { Middlewares } from "./middlewares/Middlewares";
-import { Data } from "./controllers/data";
 import { UserController } from "./controllers/UserController";
+import { ProductController } from "./controllers/ProductController";
 
 class Main {
     private app: Application;
     private port: number;
     private userController = new UserController();
+    private ProductController = new ProductController();
 
     constructor(port: number) {
         this.app = express();
@@ -25,7 +26,7 @@ class Main {
     }
 
     private routes() {
-        new Data("/test").routes(this.app);
+        
         new Authentication("/auth").routes(this.app);
 
         // User endpoints:
@@ -40,6 +41,15 @@ class Main {
         });
         this.app.delete('/api/users/:id', (req, res) => {
             this.userController.delete(req, res);
+        });
+
+        // Product endpoints:
+        this.app.post('/api/products', (req, res) => {
+            this.ProductController.create(req, res);
+        });
+
+        this.app.get('/api/products', (req, res) => {
+            this.ProductController.read(req, res);
         });
         
     }

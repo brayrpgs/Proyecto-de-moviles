@@ -116,8 +116,15 @@ export class UserService {
       });
   
       if (!user) {
-        throw new Error("User not found");
-      }
+        return {
+            id: 0,
+            email: '',
+            username: '',
+            password: '',
+            isActive: false,
+            
+        } as User; 
+    }
   
       return user;
     } catch (error: any) {

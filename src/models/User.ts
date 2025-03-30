@@ -6,7 +6,7 @@ export interface IUserAttributes {
   username: string | null;
   email: string;
   password: string | null;
-  authProvider: 'Google' | 'Facebook' | 'Apple' | 'Email' | null;
+  authProvider: 'google' | 'facebook' | 'github' | 'local' | null;
   providerId: string | null;
   accessToken: string | null;
   refreshToken: string | null;
@@ -27,7 +27,7 @@ class User extends Model<IUserAttributes, IUserCreationAttributes> implements IU
   public username!: string | null;
   public email!: string;
   public password!: string | null;
-  public authProvider!: 'Google' | 'Facebook' | 'Apple' | 'Email' | null;
+  public authProvider!: 'google' | 'facebook' | 'github' | 'local' | null;
   public providerId!: string | null;
   public accessToken!: string | null;
   public refreshToken!: string | null;
@@ -96,7 +96,7 @@ User.init(
       field: 'auth_provider',
       validate: {
         isIn: {
-          args: [['Google', 'Facebook', 'Apple', 'Email', null]],
+          args: [['google', 'facebook', 'github', 'local', null]],
           msg: 'Invalid authentication provider'
         },
         len: {
