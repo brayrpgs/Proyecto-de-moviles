@@ -3,6 +3,7 @@ require("dotenv").config();
 import { Application, Request, Response } from "express";
 import passport from "passport";
 import { UserController } from "../controllers/UserController";
+import User from "../models/User";
 
 export class Authentication {
     private route: string;
@@ -14,7 +15,7 @@ export class Authentication {
     }
 
     routes(app: Application) {
-        
+
         // Authentication routes
         this.configureAuthRoute(app, 'google', ['profile', 'email']);
         this.configureAuthRoute(app, 'facebook', ['email', 'public_profile']);
@@ -28,7 +29,7 @@ export class Authentication {
         // Route to handle the local login
         app.route(`${this.route}/login`).post((req: Request, res: Response, next) => {
             passport.authenticate(
-                "local", 
+                "local",
                 (err: any, user: Express.User | false, info: { message?: string } | undefined) => {
                     if (err) {
                         return res.status(500).send("Error in the authentication");
@@ -36,7 +37,7 @@ export class Authentication {
                     if (!user) {
                         return res.status(400).send(info?.message || "Incorrect credentials");
                     }
-        
+
                     // Create session login
                     req.logIn(user, (err: any) => {
                         if (err) {
@@ -49,21 +50,80 @@ export class Authentication {
         });
 
         // Recover data of the user
-        app.route(`${this.route}/userinfo`).get((req: Request, res: Response) => {
+        app.route(`${this.route}/userinfo`).get(async (req: Request, res: Response) => {
             if (req.user) {
-                if((req.user as any).provider === "facebook"){
-                    res.send("Hola facebook")
-                    
-                } else if ((req.user as any).provider === "google"){
-                    res.send("Hola google")
 
-                } else if ((req.user as any).provider === "github"){
-                    res.send("Hola github")
+                const response = {
+                    status: (code: number) => ({
+                        json: (data: any) => console.log(`Status: ${code}, Response:`, data)
+                    })
+                } as unknown as Response;
+
+                if ((req.user as any).provider === "facebook") {
+
+                    const request = {
+                        body: {
+                            email: (((req.user as any)._json.name).split(" ")[0] + ((req.user as any)._json.name).split(" ")[1] + "@noprovideemail.com").toLocaleLowerCase(),
+                            authProvider: (req.user as any).provider,
+                            providerId: (req.user as any).id,
+                            firstName: ((req.user as any)._json.name).split(" ")[0] || "",
+                            lastName: ((req.user as any)._json.name).split(" ")[1] || ""
+
+                        }
+                    } as Request;
+
+                    const user: User = await this.userController.findByEmail(request.body.email);
+
+                    if (user.id === 0) {
+
+                        this.userController.create(request, response);
+                    }
+
+                    res.send("Login succesfuly with facebook")
+
+                } else if ((req.user as any).provider === "google") {
+
+                    const request = {
+                        body: {
+                            email: (req.user as any)._json.email,
+                            authProvider: (req.user as any).provider,
+                            providerId: (req.user as any).id,
+                            firstName: ((req.user as any)._json.name).split(" ")[0] || "",
+                            lastName: ((req.user as any)._json.name).split(" ")[1] || ""
+                        }
+                    } as Request;
+
+                    const user: User = await this.userController.findByEmail(request.body.email);
+
+                    if (user.id === 0) {
+                        this.userController.create(request, response);
+                    }
+
+                    res.send("Login succesfuly with google")
+
+                } else if ((req.user as any).provider === "github") {
+                    const request = {
+                        body: {
+                            email: ((req.user as any).username + "@noprovideemail.com").toLocaleLowerCase(),
+                            username: (req.user as any).username,
+                            authProvider: (req.user as any).provider,
+                            providerId: (req.user as any).id,
+                            firstName: ((req.user as any)._json.name).split(" ")[0] || "",
+                            lastName: ((req.user as any)._json.name).split(" ")[1] || ""
+                        }
+                    } as Request;
+
+                    const user: User = await this.userController.findByEmail(request.body.email);
+
+                    if (user.id === 0) {
+                        this.userController.create(request, response);
+                    }
+                    res.send("Login succesfuly with github")
 
                 } else {
-                    res.send("Hola local")
+                    res.send(req.user)
                 }
-                
+
             } else {
                 res.status(401).send("User not authenticated");
             }
@@ -75,13 +135,13 @@ export class Authentication {
                 res.status(400).send("No active session to log out");
                 return;
             }
-        
+
             req.logout((err) => {
                 if (err) {
                     res.status(500).send("Failed to log out");
                     return;
                 }
-        
+
                 req.session.destroy((err) => {
                     if (err) {
                         res.status(500).send("Failed to destroy session");

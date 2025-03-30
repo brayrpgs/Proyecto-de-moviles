@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponse } from "../utils/apiResponse"
 import { generateToken } from "../utils/jwt";
 import { UserService } from '../services/UserService';
+import User from '../models/User';
 
 export class UserController {
     private userService = new UserService();
@@ -11,6 +12,7 @@ export class UserController {
     }
   
     async create(req: Request, res: Response) {
+
         try {
             const user = await this.userService.create(req.body)
             const token = generateToken({ id: user.id, email: user.email });
@@ -75,6 +77,7 @@ export class UserController {
     async findByEmail(email: string) {
         try {
             const user = await this.userService.findByEmail(email);
+            
             return user;
         } catch (error: any) {
             throw new Error(error.message); 
