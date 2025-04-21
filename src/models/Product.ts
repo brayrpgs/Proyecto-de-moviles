@@ -3,34 +3,36 @@ import sequelize from '../config/db';
 
 export interface IProductAttributes {
   id?: number;
-  url_indentifier?: string;
+  urlIdentifier?: string;
   name: string;
   summary?: string | null;
   price: string;
-  type_coin: string;
+  typeCoin: string;
   dateConsulted: Date;
   store?: string | null;
   tags?: string | null;
   isActive: boolean;
   createdAt?: Date;
   updatedAt?: Date;
+  images?: any[]
 }
 
 interface IProductCreationAttributes extends Optional<IProductAttributes, 'id'> { }
 
 class Product extends Model<IProductAttributes, IProductCreationAttributes> implements IProductAttributes {
   public id!: number;
-  public url_indentifier!: string;
+  public urlIdentifier!: string;
   public name!: string;
   public summary!: string | null;
   public price!: string;
-  public type_coin!: string;
+  public typeCoin!: string;
   public dateConsulted!: Date;
   public store!: string | null;
   public tags!: string | null;
   public isActive!: boolean;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+  public images?: any[];
 
   static associate(models: any) {
 
@@ -73,37 +75,35 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
           primaryKey: true,
         },
         name: {
-          type: DataTypes.STRING(255),
-          allowNull: false,
-          validate: {
-            notEmpty: { msg: 'Product name is required' },
-            len: { args: [1, 250], msg: 'Product name must be between 1 and 63 characters' }
-          }
-        },
-        url_indentifier: {
           type: DataTypes.TEXT,
           allowNull: false,
+          validate: {
+            notNull: { msg: 'Product name is required' },
+            notEmpty: { msg: 'Product name is required' }
+          }
+        },
+        urlIdentifier: {
+          type: DataTypes.TEXT,
+          allowNull: false,
+          field: 'url_identifier',
           unique: true,
           validate: { isUrl: { msg: 'URL must be correct' } }
         },
         summary: {
-          type: DataTypes.STRING(1027),
-          allowNull: true,
-          validate: {
-            len: { args: [0, 1027], msg: 'Summary cannot exceed 1027 characters' }
-          }
+          type: DataTypes.TEXT,
+          allowNull: true
         },
         price: {
-          type: DataTypes.STRING,
+          type: DataTypes.STRING(15),
           allowNull: false,
           validate: {
-
             notNull: { msg: 'Price is required' }
           }
         },
-        type_coin: {
+        typeCoin: {
           type: DataTypes.STRING(15),
           allowNull: false,
+          field: 'type_coin',
           validate: {
             len: { args: [0, 15], msg: 'Type coin cannot exceed 15 characters' }
           }
@@ -120,9 +120,10 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
         },
         store: {
           type: DataTypes.STRING(63),
-          allowNull: true,
+          allowNull: false,
           validate: {
-            len: { args: [0, 63], msg: 'Store name cannot exceed 63 characters' }
+            len: { args: [0, 63], msg: 'Store name cannot exceed 63 characters' },
+            notNull: { msg: 'Store is required' }
           }
         },
         tags: {
