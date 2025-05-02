@@ -27,7 +27,7 @@ export class ProductController {
                 
                 const newProduct = {
 
-                    url_indentifier: product.image,
+                    url_indentifier: product.url_product,
                     name: product.title,
                     price: product.price,
                     type_coin: product.type_coin,
@@ -46,7 +46,7 @@ export class ProductController {
             Array.from(product_ScrappingAmazon).map((product: any) => {
                 const newProduct = {
 
-                    url_indentifier: product.image,
+                    url_indentifier: product.url_product,
                     name: product.title,
                     price: product.price,
                     type_coin: product.type_coin,
@@ -64,7 +64,7 @@ export class ProductController {
             Array.from(product_ScrappingEbay).map((product: any) => {
                 const newProduct = {
 
-                    url_indentifier: product.image,
+                    url_indentifier: product.url_product,
                     name: product.title,
                     price: product.price,
                     type_coin: product.type_coin,
