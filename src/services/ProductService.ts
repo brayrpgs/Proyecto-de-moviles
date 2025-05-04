@@ -17,7 +17,12 @@ export class ProductService {
           defaults: urlImage,
           transaction
         });
-        images.push(image);
+
+        // 1.1 Just push non-repeated images (rows on db)
+        const found = images.find(({ url }) => url === image.url);
+        if (found != undefined){
+          images.push(image);
+        }
       }
   
       // 2. Create the new product
@@ -116,7 +121,11 @@ export class ProductService {
           defaults: urlImage,
           transaction
         });
-        newImages.push(image);
+        // 3.1 Just push non-repeated images (rows on db)
+        const found = newImages.find(({ url }) => url === image.url);
+        if (found != undefined){
+          newImages.push(image);
+        }
       }
   
       // 4. Identify images to add/remove
