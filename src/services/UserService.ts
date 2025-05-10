@@ -112,7 +112,7 @@ export class UserService {
     try {
       const user = await User.findOne({
         where: { email },
-        attributes: ['email', 'password', 'isActive'],
+        attributes: ['id', 'username', 'avatarUrl', 'email', 'password', 'isActive'],
       });
   
       if (!user) {
