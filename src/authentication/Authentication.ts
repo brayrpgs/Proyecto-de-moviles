@@ -43,7 +43,11 @@ export class Authentication {
                         if (err) {
                             return res.status(500).send("Error in login");
                         }
-                        return res.status(200).send("Session verified");
+                        return res.status(200).json({
+                            message: "Session verified",
+                            user: user
+                        });
+                        
                     });
                 }
             )(req, res, next);
