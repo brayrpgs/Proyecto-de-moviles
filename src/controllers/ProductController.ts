@@ -12,226 +12,92 @@ export class ProductController {
         this.productService = new ProductService();
     }
 
-    async create(req: Request, res: Response) {
-        try {
-            ApiResponse.success(res, { message: "Creating products wait a minute" }, 201);
+    // Method to save products to the database
 
+   private async saveProducts(products: any[], store: string, tagName: string): Promise<void> {
+    for (const product of products) {
+        const productImages: Image[] = product.image.map((url: string) => {
+            const image = new Image();
+            image.url = url;
+            return image;
+        });
 
-            const product_ScrappingEbay = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
-            const product_ScrappingAlibaba = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba();
-            const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
+        const newProduct = {
+            urlIdentifier: product.url_product,
+            name: product.title,
+            price: product.price,
+            typeCoin: product.type_coin,
+            dateConsulted: new Date(),
+            store: store,
+            tags: tagName,
+            isActive: true,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            images: productImages
+        };
 
-            // Saving the products in the database
-
-            Array.from(product_ScrappingAlibaba).map((product: any) => {
-
-                const productImages: Image[] = product.image.map((url: string) => {
-                    const image = new Image();
-                    image.url = url;
-                    return image;
-                });
-
-                const newProduct = {
-
-                    urlIdentifier: product.url_product,
-                    name: product.title,
-                    price: product.price,
-                    typeCoin: product.type_coin,
-                    dateConsulted: new Date,
-                    store: "Alibaba",
-                    tags: req.body.name,
-                    isActive: true,
-                    createdAt: new Date,
-                    updatedAt: new Date,
-                    images: productImages
-
-
-
-                }
-
-                this.productService.create(newProduct, newProduct.images);
-            });
-
-
-            Array.from(product_ScrappingAmazon).map((product: any) => {
-
-                const productImages: Image[] = product.image.map((url: string) => {
-                    const image = new Image();
-                    image.url = url;
-                    return image;
-                });
-
-                const newProduct = {
-
-                    urlIdentifier: product.url_product,
-                    name: product.title,
-                    price: product.price,
-                    typeCoin: product.type_coin,
-                    dateConsulted: new Date,
-                    store: "Amazon",
-                    tags: req.body.name,
-                    isActive: true,
-                    createdAt: new Date,
-                    updatedAt: new Date,
-                    images: productImages
-
-
-
-                }
-
-                this.productService.create(newProduct, newProduct.images);
-            });
-
-
-            Array.from(product_ScrappingEbay).map((product: any) => {
-
-                const productImages: Image[] = product.image.map((url: string) => {
-                    const image = new Image();
-                    image.url = url;
-                    return image;
-                });
-                const newProduct = {
-
-                    urlIdentifier: product.url_product,
-                    name: product.title,
-                    price: product.price,
-                    typeCoin: product.type_coin,
-                    dateConsulted: new Date,
-                    store: "Ebay",
-                    tags: req.body.name,
-                    isActive: true,
-                    createdAt: new Date,
-                    updatedAt: new Date,
-                    images: productImages
-                }
-                this.productService.create(newProduct, newProduct.images);
-            });
-
-
-        } catch (error: any) {
-            ApiResponse.error(res, error.message, 400);
-        }
+        await this.productService.create(newProduct, newProduct.images);
     }
+}
+// Create a new product and save it to the database
 
-    async read(req: Request, res: Response) {
-        try {
-            const page = Math.max(1, parseInt(req.query.page as string)) || 1;
-            const size = Math.min(Math.max(1, parseInt(req.query.size as string) || 10), 100);
-            const { ...queryParams } = req.query;
+async create(req: Request, res: Response) {
+    try {
+        ApiResponse.success(res, { message: "Creating products, please wait..." }, 201);
 
-            // Taking pagination data and users
-            const { count, rows: products } = await this.productService.read(page, size, queryParams);
+        const { name } = req.body;
 
-            // Result of total pages
-            const totalPages = Math.ceil(count / size);
+        const [ebayProducts, alibabaProducts, amazonProducts] = await Promise.all([
+            new WebScraping().setSearchData(name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay(),
+            new WebScraping().setSearchData(name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba(),
+            new WebScraping().setSearchData(name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon()
+        ]);
 
-            // Sending strctured response
-            ApiResponse.success(res, {
-                products,
-                pagination: {
-                    totalItems: count,
-                    totalPages,
-                    currentPage: page,
-                    pageSize: size
-                }
-            }, 200);
+        await this.saveProducts(alibabaProducts, "Alibaba", name);
+        await this.saveProducts(amazonProducts, "Amazon", name);
+        await this.saveProducts(ebayProducts, "Ebay", name);
 
-            if (count <= 15) {
+    } catch (error: any) {
+        ApiResponse.error(res, error.message, 400);
+    }
+}
+// Method to read products from the database with pagination and optional filters
+   async read(req: Request, res: Response) {
+    try {
+        const page = Math.max(1, parseInt(req.query.page as string)) || 1;
+        const size = Math.min(Math.max(1, parseInt(req.query.size as string) || 10), 100);
+        const { ...queryParams } = req.query;
 
-                if (!req.query.name && req.query.name === undefined) return 
-                const product_ScrappingEbay = await new WebScraping().setSearchData(req.query.name as string).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
-                const product_ScrappingAlibaba = await new WebScraping().setSearchData(req.body.name as string).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba();
-                const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name as string).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
+        const { count, rows: products } = await this.productService.read(page, size, queryParams);
+        const totalPages = Math.ceil(count / size);
 
-                // Saving the products in the database
-
-                Array.from(product_ScrappingAlibaba).map((product: any) => {
-
-                    const productImages: Image[] = product.image.map((url: string) => {
-                        const image = new Image();
-                        image.url = url;
-                        return image;
-                    });
-
-                    const newProduct = {
-
-                        urlIdentifier: product.url_product,
-                        name: product.title,
-                        price: product.price,
-                        typeCoin: product.type_coin,
-                        dateConsulted: new Date,
-                        store: "Alibaba",
-                        tags: req.body.name,
-                        isActive: true,
-                        createdAt: new Date,
-                        updatedAt: new Date,
-                        images: productImages
-
-
-
-                    }
-
-                    this.productService.create(newProduct, newProduct.images);
-                });
-
-
-                Array.from(product_ScrappingAmazon).map((product: any) => {
-
-                    const productImages: Image[] = product.image.map((url: string) => {
-                        const image = new Image();
-                        image.url = url;
-                        return image;
-                    });
-
-                    const newProduct = {
-
-                        urlIdentifier: product.url_product,
-                        name: product.title,
-                        price: product.price,
-                        typeCoin: product.type_coin,
-                        dateConsulted: new Date,
-                        store: "Amazon",
-                        tags: req.body.name,
-                        isActive: true,
-                        createdAt: new Date,
-                        updatedAt: new Date,
-                        images: productImages
-
-
-
-                    }
-
-                    this.productService.create(newProduct, newProduct.images);
-                });
-
-
-                Array.from(product_ScrappingEbay).map((product: any) => {
-
-                    const productImages: Image[] = product.image.map((url: string) => {
-                        const image = new Image();
-                        image.url = url;
-                        return image;
-                    });
-                    const newProduct = {
-
-                        urlIdentifier: product.url_product,
-                        name: product.title,
-                        price: product.price,
-                        typeCoin: product.type_coin,
-                        dateConsulted: new Date,
-                        store: "Ebay",
-                        tags: req.body.name,
-                        isActive: true,
-                        createdAt: new Date,
-                        updatedAt: new Date,
-                        images: productImages
-                    }
-                    this.productService.create(newProduct, newProduct.images);
-                });
+        ApiResponse.success(res, {
+            products,
+            pagination: {
+                totalItems: count,
+                totalPages,
+                currentPage: page,
+                pageSize: size
             }
-        } catch (error: any) {
-            ApiResponse.error(res, error.message, 400);
+        }, 200);
+
+        // if the count is less than or equal to 15 and a name is provided, scrape products
+        if (count <= 15 && req.query.name) {
+            const name = req.query.name as string;
+
+            const [ebayProducts, alibabaProducts, amazonProducts] = await Promise.all([
+                new WebScraping().setSearchData(name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay(),
+                new WebScraping().setSearchData(name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba(),
+                new WebScraping().setSearchData(name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon()
+            ]);
+
+            await this.saveProducts(alibabaProducts, "Alibaba", name);
+            await this.saveProducts(amazonProducts, "Amazon", name);
+            await this.saveProducts(ebayProducts, "Ebay", name);
         }
+    } catch (error: any) {
+        ApiResponse.error(res, error.message, 400);
     }
+}
 
 }
