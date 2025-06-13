@@ -4,6 +4,7 @@ import { Application, Request, Response } from "express";
 import passport from "passport";
 import { UserController } from "../controllers/UserController";
 import User from "../models/User";
+import { log } from "console";
 
 export class Authentication {
     private route: string;
@@ -47,7 +48,7 @@ export class Authentication {
                             message: "Session verified",
                             user: user
                         });
-                        
+
                     });
                 }
             )(req, res, next);
@@ -166,12 +167,33 @@ export class Authentication {
     }
 
     // Method to configure the callback route for each provider, will be changed in the future
-    private configureCallbackRoute(app: Application, provider: string) {
+    /*private configureCallbackRoute(app: Application, provider: string) {
         app.route(`${this.route}/${provider}/callback`).get(
             passport.authenticate(provider, { failureRedirect: "/" }),
             (req: Request, res: Response) => {
                 res.redirect("/auth/userinfo");
             }
         );
+    }*/
+
+    private configureCallbackRoute(app: Application, provider: string) {
+        app.route(`${this.route}/${provider}/callback`).get(
+            passport.authenticate(provider, { failureRedirect: "/" }),
+            (req: Request, res: Response) => {
+                const user = req.user as {
+                    email: string;
+                    provider: string;
+                    id: string;
+                    _json: {
+                        name: string;
+                        email: string;
+                    };
+                };
+                res.redirect(`arshopping://auth?email=${user._json.email}&provider=${user.provider}&id=${user.id}`);
+            }
+        );
     }
 }
+/**
+ * http://10.0.2.2:3000/auth/google/callback?code=4%2F0AUJR-x7AAPBWeo7j8yEY1oeyLBNjDid8Gb8FoL8_TPF8302m1okG200fxI0QUcYs2iS2Hg&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+openid+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&authuser=0&hd=est.una.ac.cr&prompt=none
+ */
