@@ -180,16 +180,18 @@ export class Authentication {
         app.route(`${this.route}/${provider}/callback`).get(
             passport.authenticate(provider, { failureRedirect: "/" }),
             (req: Request, res: Response) => {
+                //log("User authenticated:", req.user);
                 const user = req.user as {
-                    email: string;
-                    provider: string;
-                    id: string;
                     _json: {
                         name: string;
                         email: string;
+                        picture?: string;
+                        email_verified: boolean;
                     };
                 };
-                res.redirect(`arshopping://auth?email=${user._json.email}&provider=${user.provider}&id=${user.id}`);
+                //id, email, username, avatar_url, isActive
+                log(`arshopping://auth?email=${user._json.email}&username=${user._json.name}&avatar_url=${user._json.picture}&isActive=${user._json.email_verified ? 1 : 0}`);
+                res.redirect(`arshopping://auth?email=${user._json.email}&username=${user._json.name}&avatar_url=${user._json.picture}&isActive=${user._json.email_verified ? 1 : 0}`);
             }
         );
     }
