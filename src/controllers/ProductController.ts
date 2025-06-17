@@ -15,16 +15,15 @@ export class ProductController {
     async create(req: Request, res: Response) {
         try {
             ApiResponse.success(res, { message: "Creating products wait a minute" }, 201);
+            const { name } = req.body;
 
-
-            const product_ScrappingEbay = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
-            const product_ScrappingAlibaba = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba();
-            const product_ScrappingAmazon = await new WebScraping().setSearchData(req.body.name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
+            const product_ScrappingEbay = await new WebScraping().setSearchData(name).setUrls("https://www.ebay.com/").setStorage("ebay").ScrapingEbay();
+            const product_ScrappingAlibaba = await new WebScraping().setSearchData(name).setUrls("https://www.alibaba.com/").setStorage("alibaba").ScrapingAlibaba();
+            const product_ScrappingAmazon = await new WebScraping().setSearchData(name).setUrls("https://www.amazon.com/").setStorage("amazon").ScrapingAmazon();
 
             // Saving the products in the database
 
             Array.from(product_ScrappingAlibaba).map((product: any) => {
-
                 const productImages: Image[] = product.image.map((url: string) => {
                     const image = new Image();
                     image.url = url;
@@ -51,7 +50,6 @@ export class ProductController {
 
                 this.productService.create(newProduct, newProduct.images);
             });
-
 
             Array.from(product_ScrappingAmazon).map((product: any) => {
 
@@ -82,8 +80,7 @@ export class ProductController {
                 this.productService.create(newProduct, newProduct.images);
             });
 
-
-            Array.from(product_ScrappingEbay).map((product: any) => {
+            Array.from(product_ScrappingEbay).map((product: any) => {  
 
                 const productImages: Image[] = product.image.map((url: string) => {
                     const image = new Image();
@@ -105,11 +102,11 @@ export class ProductController {
                     images: productImages
                 }
                 this.productService.create(newProduct, newProduct.images);
-            });
+            }); 
 
 
         } catch (error: any) {
-            ApiResponse.error(res, error.message, 400);
+            console.log(error)
         }
     }
 
