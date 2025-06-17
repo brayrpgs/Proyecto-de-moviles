@@ -94,7 +94,7 @@ class Product extends Model<IProductAttributes, IProductCreationAttributes> impl
           allowNull: true
         },
         price: {
-          type: DataTypes.STRING(15),
+          type: DataTypes.TEXT,
           allowNull: false,
           validate: {
             notNull: { msg: 'Price is required' }

@@ -45,7 +45,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: true });
+            const browser = await puppeteer.launch({ headless: false });
             const page = await browser.newPage();
             await page.goto(`${this.url}s?k=${this.searchData}`);
             const elements = await page.$$(".a-section.a-spacing-small.a-spacing-top-small");
@@ -90,7 +90,10 @@ export class WebScraping {
             const imaPage = await browser.newPage();
             for (const value of cleanData) {
                 if (!value.url_product) continue;
-                await imaPage.goto(value.url_product);
+                await imaPage.goto(value.url_product, { 
+                    waitUntil: ["load", "networkidle0", "networkidle2"],
+                    timeout: 60000
+                });
                 const buttons = (await imaPage.$$('li.imageThumbnail')).slice(0, 10);
                 for (const btn of buttons) {
                     await btn.hover();
@@ -118,7 +121,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: true });
+            const browser = await puppeteer.launch({ headless: false });
             const page = await browser.newPage();
             await page.goto(`${this.url}/sch/i.html?_nkw=${this.searchData}&_fcid=1`);
             const elements = await page.$$(".s-item__wrapper.clearfix");
@@ -159,7 +162,10 @@ export class WebScraping {
             const imaPage = await browser.newPage();
             for (const value of cleanData) {
                 if (!value.url_product) continue;
-                await imaPage.goto(value.url_product);
+                await imaPage.goto(value.url_product, { 
+                    waitUntil: ["load", "networkidle0", "networkidle2"],
+                    timeout: 60000
+                });
                 const buttons = (await imaPage.$$('div.ux-image-grid.no-scrollbar > button')).slice(0, 10);
 
                 for (const btn of buttons) {
@@ -188,7 +194,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: true });
+            const browser = await puppeteer.launch({ headless: false });
             const page = await browser.newPage();
             await page.goto(`${this.url}trade/search?SearchText=${this.searchData}`);
             const elements = await page.$$(".fy23-search-card.m-gallery-product-item-v2.J-search-card-wrapper.fy23-gallery-card.searchx-offer-item");
@@ -230,7 +236,10 @@ export class WebScraping {
             const imaPage = await browser.newPage();
             for (const value of cleanData) {
                 if (!value.url_product) continue;
-                await imaPage.goto(value.url_product);
+                await imaPage.goto(value.url_product, { 
+                    waitUntil: ["load", "networkidle0", "networkidle2"],
+                    timeout: 60000
+                });
                 const buttons = (await imaPage.$$('.id-flex.id--mt-4.id-flex-col.id--mt-5.id-h-full>div')).slice(0, 10);
                 log(buttons.length)
                 for (const btn of buttons) {
