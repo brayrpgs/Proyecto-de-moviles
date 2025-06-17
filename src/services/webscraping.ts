@@ -89,17 +89,22 @@ export class WebScraping {
              */
             const imaPage = await browser.newPage();
             for (const value of cleanData) {
-                if (!value.url_product) continue;
-                await imaPage.goto(value.url_product, { 
-                    waitUntil: ["load", "networkidle0", "networkidle2"],
-                    timeout: 60000
-                });
-                const buttons = (await imaPage.$$('li.imageThumbnail')).slice(0, 10);
-                for (const btn of buttons) {
-                    await btn.hover();
-                    const imgElement = await imaPage.$("img.a-dynamic-image");
-                    const img = await imgElement?.evaluate(img => img.src);
-                    if (img) value.image.push(img);
+                try {
+                    if (!value.url_product) continue;
+                    await imaPage.goto(value.url_product, {
+                        waitUntil: "load",
+                        timeout: 60000,
+                    });
+                    const buttons = (await imaPage.$$('li.imageThumbnail')).slice(0, 10);
+                    for (const btn of buttons) {
+                        await btn.hover();
+                        const imgElement = await imaPage.$("img.a-dynamic-image");
+                        const img = await imgElement?.evaluate(img => img.src);
+                        if (img) value.image.push(img);
+                    }
+                } catch (error) {
+                    error instanceof Error ? console.log(error) : false
+                    continue
                 }
             }
 
@@ -161,18 +166,23 @@ export class WebScraping {
             */
             const imaPage = await browser.newPage();
             for (const value of cleanData) {
-                if (!value.url_product) continue;
-                await imaPage.goto(value.url_product, { 
-                    waitUntil: ["load", "networkidle0", "networkidle2"],
-                    timeout: 60000
-                });
-                const buttons = (await imaPage.$$('div.ux-image-grid.no-scrollbar > button')).slice(0, 10);
+                try {
+                    if (!value.url_product) continue;
+                    await imaPage.goto(value.url_product, {
+                        waitUntil: "load",
+                        timeout: 60000
+                    });
+                    const buttons = (await imaPage.$$('div.ux-image-grid.no-scrollbar > button')).slice(0, 10);
 
-                for (const btn of buttons) {
-                    await btn.hover();
-                    const test = await imaPage.$(".ux-image-carousel-item.image-treatment.active.image > img");
-                    const img = await test?.evaluate((img) => img.src);
-                    if (img) value.image.push(img);
+                    for (const btn of buttons) {
+                        await btn.hover();
+                        const test = await imaPage.$(".ux-image-carousel-item.image-treatment.active.image > img");
+                        const img = await test?.evaluate((img) => img.src);
+                        if (img) value.image.push(img);
+                    }
+                } catch (error) {
+                    error instanceof Error ? console.log(error) : false
+                    continue
                 }
             }
 
@@ -235,20 +245,26 @@ export class WebScraping {
             */
             const imaPage = await browser.newPage();
             for (const value of cleanData) {
-                if (!value.url_product) continue;
-                await imaPage.goto(value.url_product, { 
-                    waitUntil: ["load", "networkidle0", "networkidle2"],
-                    timeout: 60000
-                });
-                const buttons = (await imaPage.$$('.id-flex.id--mt-4.id-flex-col.id--mt-5.id-h-full>div')).slice(0, 10);
-                log(buttons.length)
-                for (const btn of buttons) {
-                    await btn.hover();
-                    const test = await imaPage.$("img.id-h-full.id-w-full.id-object-contain");
-                    const img = await test?.evaluate((img) => img.src);
-                    if (img) value.image.push(img);
+                try {
+                    if (!value.url_product) continue;
+                    await imaPage.goto(value.url_product, {
+                        waitUntil: "load",
+                        timeout: 60000
+                    });
+                    const buttons = (await imaPage.$$('.id-flex.id--mt-4.id-flex-col.id--mt-5.id-h-full>div')).slice(0, 10);
+                    log(buttons.length)
+                    for (const btn of buttons) {
+                        await btn.hover();
+                        const test = await imaPage.$("img.id-h-full.id-w-full.id-object-contain");
+                        const img = await test?.evaluate((img) => img.src);
+                        if (img) value.image.push(img);
+                    }
+                } catch (error) {
+                    error instanceof Error ? console.log(error) : false
+                    continue
                 }
             }
+
 
 
             /** close window */
