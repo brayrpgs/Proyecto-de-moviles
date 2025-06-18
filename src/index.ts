@@ -42,6 +42,12 @@ class Main {
         this.app.delete('/api/users/:id', (req, res) => {
             this.userController.delete(req, res);
         });
+        this.app.post('/api/users/recovery-password', (req, res) => {
+            this.userController.sendOTP(req, res);
+        });
+        this.app.post('/api/users/confirm-recovery-password', (req, res) => {
+            this.userController.validateOTPToRecoverPassword(req, res);
+        });
 
         // Product endpoints:
         this.app.post('/api/products', (req, res) => {
