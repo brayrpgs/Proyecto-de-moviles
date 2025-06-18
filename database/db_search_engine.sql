@@ -410,3 +410,19 @@ ALTER TABLE ONLY public.tb_product_image
 -- PostgreSQL database dump complete
 --
 
+
+CREATE TABLE public.tb_user_password_recovery (
+    id SERIAL PRIMARY KEY,
+    id_user INTEGER NOT NULL,
+    otp VARCHAR(15) NOT NULL CHECK (LENGTH(otp) BETWEEN 1 AND 15),
+    is_used BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY (id_user) 
+        REFERENCES public.tb_user(id) 
+        ON UPDATE CASCADE 
+        ON DELETE CASCADE
+);
+
+-- Create indexes
+CREATE INDEX idx_userpasswordrecovery_id_user ON public.tb_user_password_recovery(id_user);
+CREATE INDEX idx_userpasswordrecovery_otp ON public.tb_user_password_recovery(otp);
