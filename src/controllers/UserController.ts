@@ -4,7 +4,6 @@ import { generateToken } from "../utils/jwt";
 import { UserService } from '../services/UserService';
 import { EmailService } from '../services/EmailService';
 import { UserPasswordRecoveryService } from '../services/UserPasswordRecoveryService';
-import { sanitizeUser } from '../utils/helpers';
 
 export class UserController {
     private userService;
@@ -99,11 +98,11 @@ export class UserController {
             }
 
             // 2. Validate that user exists
-            const userInstance = await this.userService.findByEmail(email);
-            const user = userInstance.get({ plain: true });
+            const user = await this.userService.findByEmail(email);
+            const { password, ...sanitizedUser } = user;
 
             // 2.1 If user dont exist, send ApiResponse
-            if (userInstance.id === 0 || !user || !user.id) {
+            if (user.id === 0 || !user || !user.id) {
                 ApiResponse.error(res, "User not found", 404);
                 return;
             }
@@ -122,7 +121,7 @@ export class UserController {
             await emailService.sendOTPEmail({ to: user.email, otp: recordOTP.otp });
 
             // 6. Response
-            ApiResponse.success(res, { user: sanitizeUser(user) })
+            ApiResponse.success(res, { user: sanitizedUser })
         } catch (error: any) {
             console.log(error)
             ApiResponse.error(res, "Unexpected error has ocurred", 500);
