@@ -140,7 +140,7 @@ export class UserController {
             }
 
             // 2. Validate OTP
-            const otpRecord = await this.passwordRecoveryService.getOTPRecordIfValid(otp, user.email);
+            const otpRecord = await this.passwordRecoveryService.getOTPRecordIfValid(otp.trim(), user.email);
             if (!otpRecord || !otpRecord.user) {
                 ApiResponse.error(res, "OTP is not valid");
                 return;
