@@ -83,6 +83,7 @@ export class ProductService {
       return await Product.findAndCountAll({
         limit: size,
         offset: (page - 1) * size,
+        distinct: true,
         attributes: ['urlIdentifier', 'name', 'price', 'typeCoin', 'store', 'tags', 'id', 'dateConsulted'],
         where: Object.keys(where).length > 0 ? where : undefined,
         include: [{
