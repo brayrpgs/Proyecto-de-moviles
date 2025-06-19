@@ -22,6 +22,14 @@ services:
       - "80:80"
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+  arshopping:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
 
 volumes:
   postgres_data:
