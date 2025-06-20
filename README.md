@@ -18,12 +18,12 @@ Before running the project, make sure you have the following installed:
 git clone https://github.com/brayrpgs/Proyecto-de-moviles.git
 cd Proyecto-de-moviles
 
-#⚙️ Run the Project with Docker
+# ⚙️ Run the Project with Docker
 Inside the project directory, run:
 
 docker compose up --build
 
-#📡 Access the API
+# 📡 Access the API
 
 http://localhost:3000/
 
@@ -31,12 +31,12 @@ You can test the endpoints using:
 
 Postman
 
-#📄 Environment Variables
+# 📄 Environment Variables
 
 The project uses environment variables defined in the .env file.
 Make sure to review or customize it as needed before deployment.
 
-#🧪 Testing & Development
+# 🧪 Testing & Development
 
 docker compose up --build
 
