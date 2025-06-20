@@ -4,7 +4,7 @@ Welcome to the backend of the Mobile Project. This API is fully containerized us
 
 ---
 
-## 🐳 Prerequisites
+# 🐳 Prerequisites
 
 Before running the project, make sure you have the following installed:
 
@@ -13,7 +13,7 @@ Before running the project, make sure you have the following installed:
 
 ---
 
-## 📦 Clone the Repository
+# 📦 Clone the Repository
 
 git clone https://github.com/brayrpgs/Proyecto-de-moviles.git
 cd Proyecto-de-moviles
