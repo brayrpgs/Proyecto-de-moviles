@@ -14,16 +14,16 @@ Before running the project, make sure you have the following installed:
 ---
 
 # 📦 Clone the Repository
-
+```bash
 git clone https://github.com/brayrpgs/Proyecto-de-moviles.git
-
 cd Proyecto-de-moviles
+```
 
 # ⚙️ Run the Project with Docker
 Inside the project directory, run:
-
+```bash
 docker compose up --build
-
+```
 # 📡 Access the API
 
 http://localhost:3000/
@@ -38,7 +38,7 @@ The project uses environment variables defined in the .env file.
 Make sure to review or customize it as needed before deployment.
 
 # 🧪 Testing & Development
-
+```bash
 docker compose up --build
-
+```
 # 🎥 Tutorial Video
