@@ -57,6 +57,12 @@ class Main {
         this.app.get('/api/products', (req, res) => {
             this.ProductController.read(req, res);
         });
+         this.app.patch('/api/products/:id', (req, res) => {
+            this.ProductController.update(req, res);
+        });
+        this.app.delete('/api/products/:id', (req, res) => {
+            this.ProductController.delete(req, res);
+        });
         
     }
 
