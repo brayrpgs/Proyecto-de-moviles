@@ -16,6 +16,7 @@ Before running the project, make sure you have the following installed:
 # 📦 Clone the Repository
 
 git clone https://github.com/brayrpgs/Proyecto-de-moviles.git
+
 cd Proyecto-de-moviles
 
 # ⚙️ Run the Project with Docker
@@ -40,4 +41,4 @@ Make sure to review or customize it as needed before deployment.
 
 docker compose up --build
 
-#🎥 Tutorial Video
+# 🎥 Tutorial Video
