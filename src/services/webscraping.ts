@@ -45,7 +45,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: false });
+            const browser = await puppeteer.launch({ headless: true , args: ['--no-sandbox', '--disable-setuid-sandbox']});
             const page = await browser.newPage();
             await page.goto(`${this.url}s?k=${this.searchData}`);
             const elements = await page.$$(".a-section.a-spacing-small.a-spacing-top-small");
@@ -102,6 +102,7 @@ export class WebScraping {
                         const img = await imgElement?.evaluate(img => img.src);
                         if (img) value.image.push(img);
                     }
+                    console.log("Add product amazon");
                 } catch (error) {
                     error instanceof Error ? console.log(error) : false
                     continue
@@ -126,7 +127,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: false });
+            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
             const page = await browser.newPage();
             await page.goto(`${this.url}/sch/i.html?_nkw=${this.searchData}&_fcid=1`);
             const elements = await page.$$(".s-item__wrapper.clearfix");
@@ -180,6 +181,7 @@ export class WebScraping {
                         const img = await test?.evaluate((img) => img.src);
                         if (img) value.image.push(img);
                     }
+                    console.log("Add product ebay");
                 } catch (error) {
                     error instanceof Error ? console.log(error) : false
                     continue
@@ -204,7 +206,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: false });
+            const browser = await puppeteer.launch({ headless: true , args: ['--no-sandbox', '--disable-setuid-sandbox']});
             const page = await browser.newPage();
             await page.goto(`${this.url}trade/search?SearchText=${this.searchData}`);
             const elements = await page.$$(".fy23-search-card.m-gallery-product-item-v2.J-search-card-wrapper.fy23-gallery-card.searchx-offer-item");
@@ -259,6 +261,7 @@ export class WebScraping {
                         const img = await test?.evaluate((img) => img.src);
                         if (img) value.image.push(img);
                     }
+                    console.log("Add product alibaba");
                 } catch (error) {
                     error instanceof Error ? console.log(error) : false
                     continue
