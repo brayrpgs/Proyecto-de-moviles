@@ -45,7 +45,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: true , args: ['--no-sandbox', '--disable-setuid-sandbox']});
+            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             await page.goto(`${this.url}s?k=${this.searchData}`);
             const elements = await page.$$(".a-section.a-spacing-small.a-spacing-top-small");
@@ -115,7 +115,7 @@ export class WebScraping {
             await page.close();
             await browser.close();
 
-            return cleanData;
+            return cleanData.filter((value) => value.image.length > 0);
         } catch (error) {
             throw new Error("Error : " + error);
         }
@@ -127,7 +127,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox']});
+            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             await page.goto(`${this.url}/sch/i.html?_nkw=${this.searchData}&_fcid=1`);
             const elements = await page.$$(".s-item__wrapper.clearfix");
@@ -157,7 +157,9 @@ export class WebScraping {
                     value.url_product !== "javascript:void(0)" &&
                     value.title !== "Sin título" &&
                     !isEmpty(value.url_product) &&
-                    value.title !== 'Shop on eBay'
+                    value.title !== 'Shop on eBay' &&
+                    value.price !== "0" &&
+                    value.type_coin !== "Sin moneda"
             );
 
 
@@ -194,7 +196,7 @@ export class WebScraping {
             await page.close();
             await browser.close();
 
-            return cleanData;
+            return cleanData.filter((value) => value.image.length > 0);
         } catch (error) {
             throw new Error("Error: " + error);
         }
@@ -206,7 +208,7 @@ export class WebScraping {
             /**
              * configuration and search
              */
-            const browser = await puppeteer.launch({ headless: true , args: ['--no-sandbox', '--disable-setuid-sandbox']});
+            const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
             const page = await browser.newPage();
             await page.goto(`${this.url}trade/search?SearchText=${this.searchData}`);
             const elements = await page.$$(".fy23-search-card.m-gallery-product-item-v2.J-search-card-wrapper.fy23-gallery-card.searchx-offer-item");
@@ -222,7 +224,7 @@ export class WebScraping {
                             title: el.querySelector(".search-card-e-title>a>span")?.textContent?.trim() || "Sin título",
                             image: [] as string[],
                             type_coin: el.querySelector(".search-card-e-price-main")?.textContent?.match(/[A-Z$]+/g)?.pop() || "Sin moneda",
-                            price: el.querySelector(".search-card-e-price-main")?.textContent?.slice(0, -4) || "00",
+                            price: el.querySelector(".search-card-e-price-main")?.textContent || "00",
                             url_product: el.querySelector("a")?.href || "",
                         };
                     }, element);
@@ -275,7 +277,7 @@ export class WebScraping {
             await page.close();
             await browser.close();
 
-            return cleanData;
+            return cleanData.filter((value) => value.image.length > 0);
         } catch (error) {
             throw new Error("Error: " + error);
         }
